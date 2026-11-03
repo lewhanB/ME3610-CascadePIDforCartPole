@@ -1,0 +1,105 @@
+#VRML_SIM R2025a utf8
+# template language: javascript
+# Box cart and uniform box pole; X travel, Y hinge axis, Z up.
+PROTO CartPole [
+  field SFVec3f translation 0 0 0
+  field SFRotation rotation 0 0 1 0
+  field SFString name "cart-pole"
+  field SFString controller "cascade_pid"
+  field MFString controllerArgs []
+  field SFFloat initialAngle 0.05
+] {
+  Robot {
+    translation IS translation
+    rotation IS rotation
+    name IS name
+    controller IS controller
+    controllerArgs IS controllerArgs
+    # No root Physics: the slider's parent is fixed to the world.
+    children [
+      Pose {
+        translation 0 0 0.18
+        children [
+          Shape {
+            appearance PBRAppearance { baseColor 0.22 0.25 0.30 roughness 0.55 metalness 0.5 }
+            geometry Box { size 4.6 0.12 0.08 }
+          }
+        ]
+      }
+      Pose {
+        translation -2.15 0 0.10
+        children [
+          DEF SUPPORT Shape {
+            appearance PBRAppearance { baseColor 0.12 0.15 0.20 roughness 0.8 metalness 0 }
+            geometry Box { size 0.12 0.5 0.20 }
+          }
+        ]
+      }
+      Pose { translation 2.15 0 0.10 children [ USE SUPPORT ] }
+      SliderJoint {
+        jointParameters JointParameters {
+          axis 1 0 0
+          position 0
+          minStop -2
+          maxStop 2
+          dampingConstant 0.05
+        }
+        device [
+          LinearMotor { name "cart_motor" maxForce 20 maxVelocity 10 }
+          PositionSensor { name "cart_position" }
+        ]
+        endPoint DEF CART Solid {
+          translation 0 0 0.30
+          name "cart"
+          children [
+            Shape {
+              appearance PBRAppearance { baseColor 0.05 0.38 0.75 roughness 0.4 metalness 0.15 }
+              geometry Box { size 0.30 0.22 0.12 }
+            }
+            HingeJoint {
+              jointParameters HingeJointParameters {
+                axis 0 1 0
+                anchor 0 0 0.07
+                position IS initialAngle
+                dampingConstant 0.001
+              }
+              # Passive hinge: there is deliberately no pole motor.
+              device [ PositionSensor { name "pole_angle" } ]
+              endPoint DEF POLE Solid {
+                translation 0 0 0.07
+                rotation 0 1 0 %<= fields.initialAngle.value >%
+                name "pole"
+                children [
+                  Pose {
+                    translation 0 0 0.30
+                    children [
+                      Shape {
+                        appearance PBRAppearance { baseColor 0.95 0.38 0.08 roughness 0.5 metalness 0 }
+                        geometry Box { size 0.03 0.03 0.60 }
+                      }
+                    ]
+                  }
+                ]
+                boundingObject Pose {
+                  translation 0 0 0.30
+                  children [ Box { size 0.03 0.03 0.60 } ]
+                }
+                physics Physics {
+                  density -1
+                  mass 0.20
+                  damping Damping { linear 0 angular 0 }
+                }
+              }
+            }
+          ]
+          boundingObject Box { size 0.30 0.22 0.12 }
+          physics Physics {
+            density -1
+            mass 1.0
+            damping Damping { linear 0 angular 0 }
+          }
+        }
+      }
+    ]
+  }
+}

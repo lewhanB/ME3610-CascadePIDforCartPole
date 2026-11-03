@@ -1,0 +1,25 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "../protos/CartPole.proto"
+
+WorldInfo {
+  basicTimeStep 8
+  physicsDisableLinearThreshold 0
+  physicsDisableAngularThreshold 0
+}
+Viewpoint {
+  orientation -0.24903895050063363 0.2520941589279404 0.9351086226572597 2.196485318005793
+  position 3.9639665499882204 -5.047069012289426 4.811970045245145
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+RectangleArena {
+  floorSize 6 3
+}
+DEF CART_POLE CartPole {
+}
